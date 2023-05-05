@@ -1,0 +1,69 @@
+{% extends 'master.html' %}
+{% load static %}
+
+{% block content %}
+    <h1>There are your posts</h1>
+    {% for el in posts reversed %}
+        <div class="container posts-content">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <input type="hidden" name="post_id" value="{{ el.id }}">
+                            <h4>{{ el.title }}</h4>
+                            <p>
+                                {{ el.content }}
+                            </p>
+                            {% if request.user.username == el.user %}
+                                <a href="{% url 'delete' el.id %}">Видалити</a>
+                            {% endif %}
+                            <div class="media mb-3">
+                                <img src="{% static el.image.url %}" class="d-block ui-w-40" alt="" width="100%">
+                                <div class="media-body ml-3">
+                                    {{ el.user }}
+                                    <div class="text-muted small">{{ el.created_at }}</div>
+                                </div>
+                            </div>
+
+                            {#                <a href="javascript:void(0)" class="ui-rect ui-bg-cover" style="background-image: url('https://bootdey.com/img/Content/avatar/avatar3.png');"></a>#}
+                        </div>
+                        <div class="flex space-x-4 lg:font-bold">
+                            <a href="/like-post?post_id={{ el.id }}" class="flex items-center space-x-2">
+                                <div class="p-2 rounded-full text-black">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                         width="25" height="25" class="">
+                                        <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z"/>
+                                    </svg>
+                                    {% if el.no_of_likes == 0 %}
+                                        <p>Ще ніхто не вподобав</p>
+                                    {% elif el.no_of_likes == 1 %}
+                                        <p>Вподобала {{ el.no_of_likes }} особа</p>
+                                    {% else %}
+                                        <p>Вподобало {{ el.no_of_likes }} осіб</p>
+                                    {% endif %}
+                                </div>
+                            </a>
+                            {#                    <a href="{{post.image.url}}" class="flex items-center space-x-2 flex-1 justify-end" download>#}
+                            {#                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" width="25" height="25" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16"><g fill="currentColor"><path d="M8.5 1.5A1.5 1.5 0 0 1 10 0h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h6c-.314.418-.5.937-.5 1.5v6h-2a.5.5 0 0 0-.354.854l2.5 2.5a.5.5 0 0 0 .708 0l2.5-2.5A.5.5 0 0 0 10.5 7.5h-2v-6z"/></g></svg>#}
+                            {#                    </a>#}
+                        </div>
+                        <div>
+                            <h3>Коментарі</h3>
+                            <a href="/make-comment/{{ el.id }}">Додайте коментар</a>
+                            <br>
+                            {% if comment %}
+                                {% for comment in post.comments.all %}
+                                    <strong>{{ comment.username }} - {{ comment.created_at }}</strong>
+                                    <br>
+                                    <p>{{ comment.body|linebreaks }}</p>
+                                {% endfor %}
+                            {% else %}
+                                <p>Ще немає коментарів</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
